@@ -1,0 +1,9 @@
+D:\Project V2\ModdedControls\bin\Debug\ModdedControls.dll
+D:\Project V2\ModdedControls\bin\Debug\ModdedControls.pdb
+D:\Project V2\ModdedControls\obj\Debug\ModdedControls.dll
+D:\Project V2\ModdedControls\obj\Debug\ModdedControls.pdb
+D:\Project V2\ModdedControls\obj\Debug\ModdedControls.csprojResolveAssemblyReference.cache
+D:\Project V2\ModdedControls\bin\Debug\System.Numerics.dll
+D:\Project V2\ModdedControls\bin\Debug\System.Numerics.xml
+D:\Project V2\ModdedControls\obj\Debug\ModdedControls.Properties.Resources.resources
+D:\Project V2\ModdedControls\obj\Debug\ModdedControls.csproj.GenerateResource.Cache
