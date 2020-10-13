@@ -18,7 +18,6 @@ namespace ModdedControls
         public ModdedTextBox()
         {
             InitializeComponent();
-            originalColor = ForeColor; originalFont = Font;
             ResetListBox();
         }
 
@@ -61,14 +60,14 @@ namespace ModdedControls
             _showPasswordButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             _showPasswordButton.Top = Top;
             _showPasswordButton.Left = Left;
-            _showPasswordButton.Size = new Size((int)(Height /** 1.30*/), (int)(Height /** 1.30*/));
+            _showPasswordButton.Size = new Size(Height, Height); // * 1.300 was a good random number but useless now 
             _showPasswordButton.Visible = true;
             _showPasswordButton.BringToFront();
             _showPasswordButton.Click += _showPasswordButton_Click;
             Parent.Update();
         }
-        private Color originalColor = Color.Black;
-        private Font originalFont;
+        private Color? originalColor = Color.Black;
+        private Font originalFont = null;
         private bool _ispasswordtextbox = false;
         private string _placeholder = string.Empty;
         private Font _placeholderFont;
@@ -79,10 +78,20 @@ namespace ModdedControls
             get { return _isPlaceholder; }
             set
             {
-                if (value) { _isPlaceholder = value; ForeColor = placeholderColor; Text = Placeholder; UseSystemPasswordChar = false; }
-                else { ForeColor = originalColor; UseSystemPasswordChar = IsPasswordTextbox; }
+                if (value) { _isPlaceholder = value; ForeColor = placeholderColor; Font = placeholderFont != null ? placeholderFont : originalFont; Text = Placeholder; UseSystemPasswordChar = false; }
+                else { ForeColor =  originalColor.Value;Font = originalFont; UseSystemPasswordChar = IsPasswordTextbox; }
                 _isPlaceholder = value;
             }
+        }
+        public new Font Font
+        {
+            get { return base.Font; }
+            set { if (originalFont == null) originalFont = value; base.Font = value; }
+        }
+        public new Color ForeColor
+        {
+            get { return base.ForeColor; }
+            set { if (originalColor == null) originalColor = value; base.ForeColor = value; }
         }
         public new string Text
         {
@@ -99,8 +108,7 @@ namespace ModdedControls
             if (_listBox.Items.Count > 0)
             {
                 this.Text = _listBox.Items[_listBox.SelectedIndex % _listBox.Items.Count].ToString();
-                _listBox.Hide();
-                _isAdded = false;
+                ResetListBox();
             }
         }
         private void ShowListBox()
@@ -121,6 +129,7 @@ namespace ModdedControls
         private void ResetListBox()
         {
             _listBox.Visible = false;
+            _isAdded = false;
             if (FindForm() != null && FindForm().AcceptButton == null)
                 FindForm().AcceptButton = _tempButton;
         }
@@ -134,7 +143,7 @@ namespace ModdedControls
             CheckPasswordButton();
             if (_isPlaceholder)
             {
-                ForeColor = originalColor; Text = "";/* Font = originalFont;*/ UseSystemPasswordChar = IsPasswordTextbox;
+                ForeColor = originalColor.Value; Text = ""; Font = originalFont; UseSystemPasswordChar = IsPasswordTextbox;
                 _isPlaceholder = false;
             }
             Update();
@@ -142,7 +151,10 @@ namespace ModdedControls
         private void this_Leave(object sender, EventArgs e)
         {
             if (_showPasswordButton != null && _showPasswordButton.Focused) return;
-            IsPlaceholder =/* UseSystemPasswordChar =*/ Text.Length < 1; Update();
+            IsPlaceholder =/* UseSystemPasswordChar =*/ Text.Length < 1;
+            if (FindForm() != null && FindForm().AcceptButton == null && _tempButton != null)
+                FindForm().AcceptButton = _tempButton;
+            Update();
         }
         private void this_LostFocus(object sender, EventArgs e)
         {
@@ -170,8 +182,7 @@ namespace ModdedControls
                         if (_listBox.Items.Count > 0)
                         {
                             this.Text = _listBox.Items[_listBox.SelectedIndex % _listBox.Items.Count].ToString();
-                            _listBox.Hide();
-                            _isAdded = false;
+                            ResetListBox();
                         }
                         break;
                     }
