@@ -31,12 +31,19 @@ namespace ModdedControls
             KeyUp += this_KeyUp;
             Enter += this_Enter;
             Leave += this_Leave;
+            SizeChanged += ModdedTextBox_SizeChanged;
+            LocationChanged += ModdedTextBox_LocationChanged;
             LostFocus += this_LostFocus;
             ParentChanged += this_ParentChanged; ;
         }
 
-        private void this_ParentChanged(object sender, EventArgs e)
-        { this_Enter(this, EventArgs.Empty); this_Leave(this, EventArgs.Empty); }
+        private void ModdedTextBox_LocationChanged(object sender, EventArgs e)
+        { if (_showPasswordButton != null) { _showPasswordButton.Top = Top; _showPasswordButton.Left = Left; } }
+
+        private void ModdedTextBox_SizeChanged(object sender, EventArgs e)
+        { if (_showPasswordButton != null) _showPasswordButton.Size = new Size(Height, Height); }
+
+        private void this_ParentChanged(object sender, EventArgs e) => CheckPasswordButton();
 
         private void _showPasswordButton_Click(object sender, EventArgs e)
         {
@@ -117,11 +124,14 @@ namespace ModdedControls
             if (FindForm() != null && FindForm().AcceptButton == null)
                 FindForm().AcceptButton = _tempButton;
         }
-
-        private void this_Enter(object sender, EventArgs e)
+        private void CheckPasswordButton()
         {
             if (Visible_Password_Button && _showPasswordButton == null) PrepareButton();
             if (Visible_Password_Button == false) _showPasswordButton = null;
+        }
+        private void this_Enter(object sender, EventArgs e)
+        {
+            CheckPasswordButton();
             if (_isPlaceholder)
             {
                 ForeColor = originalColor; Text = "";/* Font = originalFont;*/ UseSystemPasswordChar = IsPasswordTextbox;
